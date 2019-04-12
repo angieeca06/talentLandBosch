@@ -1,0 +1,26 @@
+{
+  "name": "talentlandbosch",
+  "version": "1.0.0",
+  "description": "Repository for Bosch hackaton at chatbot track",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angieeca06/talentLandBosch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angieeca06/talentLandBosch/issues"
+  },
+  "homepage": "https://github.com/angieeca06/talentLandBosch#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "jest": "^24.7.1"
+  },
+  "dependencies": {
+    "eslint-plugin-jest": "^22.4.1"
+  }
+}
