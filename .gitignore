@@ -1,6 +1,5 @@
+*.pyc
 .DS_Store
-*.swp
-.nyc_output/
-coverage/
-node_modules/
-package-lock.json
+venv/
+node_modules
+
