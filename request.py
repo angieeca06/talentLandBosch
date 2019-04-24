@@ -10,7 +10,7 @@ log = app.logger
 
 auth = None
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST', 'GET'])
 def webhook():
     """This method handles the http requests for the Dialogflow webhook
     """
