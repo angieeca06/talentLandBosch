@@ -1,9 +1,9 @@
-#BoschBot
+BoschBot
 
-##Functional Chatbot:
+Functional Chatbot:
 https://www.facebook.com/Bosch-PartsTech-434563250687981/
 
-##FFinal Presentation:
+FFinal Presentation:
 When it comes to buying auto parts, the process can be as fast and efficient as the customer is, or as painfully, slow and tedious as the customer is willing before asking for help to the sales agent on a classic auto shop; that can be due many reasons but most of the times it’s because a false shame feeling based on previous occasions requiring help, asking many questions or just not knowing exactly what do you need. Thinking about that and adding the waiting times, the need to go to the store plus finding a parking slot can turn a joyful buying experience into a really uncomfortable situation. That’s where the online stores shine. In order to reach that excellence standard they get help from their teams of experts on different fields, but many of them need to hire offshore call centers to help the customer get what they want and that also has some drawbacks many times like the wait time on line to get help from a person, or wait for the auto menu to say the options and pressing the correct number for that, a bad phone signal or just not being able to hear what the other person says clearly turning the whole experience into an unpleasant process.
 
 So, what if we could find a tool to make that task more efficient and enjoyable for the customer? 
