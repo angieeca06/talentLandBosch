@@ -2,13 +2,14 @@ import json
 import requests
 import random
 from flask import Flask, request, make_response, jsonify
-from responses import PRECIO_PARTE, INFO_PARTE
-from config import (LOGON_ID, LOGON_PASSWORD,BASIC_AUTH)
+from responses import PRECIO_PARTE, INFO_PARTE, PART_TECH
+from config import (LOGON_ID, LOGON_PASSWORD, PARTNER_ID, PARTNER_KEY)
 
 app = Flask(__name__)
 log = app.logger
 
 auth = None
+
 
 @app.route('/', methods=['POST', 'GET'])
 def webhook():
@@ -23,28 +24,31 @@ def webhook():
     parameters = req['queryResult']['parameters']
 
     part_number = parameters['any']
+    part_tech = parameters['any']
 
-    if part_number != "":
-            
-        if action == 'info_parte':
-            res = get_part_info(part_number)
+    if part_tech != "":
+
+        if action == 'part_tech':
+            res = get_part_tech(part_tech)
         elif action == 'precio_parte':
             res = get_part_price(part_number)
         else:
             log.error('Unexpected action.')
 
     else:
-        res = {"fulfillmentText":'Favor de especificar el número de parte'}
+        res = {"fulfillmentText": 'Favor de especificar el número de parte'}
 
+    
     print('Action: ' + action)
     print(res)
 
     return make_response(jsonify(res))
 
+
 def get_part_price(part_number):
     response = part_request(part_number)
 
-    if response is None: 
+    if response is None:
         text = "El numero de parte es incorrecto"
     else:
 
@@ -53,7 +57,7 @@ def get_part_price(part_number):
 
         output_string = random.choice(PRECIO_PARTE)
 
-        text = output_string.format(nombre = nombre, precio = precio)
+        text = output_string.format(nombre=nombre, precio=precio)
 
     res = {"fulfillmentText": text,
             "fulfillmentMessages": [
@@ -79,33 +83,27 @@ def get_part_price(part_number):
     return res
 
 
-def get_part_info(part_number):
-    response = part_request(part_number)
 
-    if response is None: 
-        text = "El numero de parte es incorrecto"
+# Test function for part tech test
+
+
+def get_part_tech(part_tech):
+    response = part_tech_request(part_tech)
+    print(part_tech + 'Esto es una prueba')
+
+    if response is None:
+        text = "Muchas gracias, permítame consultar con mi supervisor"
     else:
 
-        precio = response['PriceINMXN']
-        nombre = response['name']
-        part_id = response['uniqueID']
-        descripcion = response['shortDescription']
+        parttech = response['partName']
 
-        image = response['fullImage']
+        output_string = random.choice(PART_TECH)
 
-        output_string = random.choice(INFO_PARTE)
-
-        text = output_string.format(id = part_id, nombre = nombre, precio = precio, descripcion = descripcion)
+        text = output_string.format(partName=parttech)
 
     res = {"fulfillmentText": text,
             "fulfillmentMessages": [
 
-           {
-                "image": {
-                  "imageUri": image
-                },
-                "platform": "FACEBOOK"
-              },
 
             {
                 "text": {
@@ -113,13 +111,7 @@ def get_part_info(part_number):
                 },
                 "platform": "FACEBOOK"
               },
-            {
-                "image": {
-                  "imageUri": image
-                },
-                "platform": "SLACK"
-              },
-            {
+              {
                 "text": {
                   "text": [text]
                 },
@@ -128,16 +120,34 @@ def get_part_info(part_number):
             {"text": {
                     "text": [text]
                     }
-            },
-            {"text": {
-                    "text": ['URL de la imagen: ' + image]
-                    }
             }
-
       ]
       }
 
     return res
+
+# PartTech Request
+
+
+def part_tech_request(part_number):
+    global auth
+    if auth is None:
+        auth = authenticate()
+
+    url = "https://api.beta.partstech.com/catalog/parts/{}".format(part_number)
+    payload = auth
+    headers = {
+        'Content-Type': "application/json",
+        'cache-control': "no-cache"
+        }
+
+    response = requests.request("POST", url, json=payload, headers=headers)
+
+    auth = None
+    if response.status_code == 200 or response.status_code == 201:
+        return response.json()
+    else:
+        return None
 
 
 def part_request(part_number):
@@ -145,33 +155,42 @@ def part_request(part_number):
     if auth is None:
         auth = authenticate()
 
-    url = "https://esb.boschenlinea.com/api/productview/{}".format(part_number)
+    url = "https://api.beta.partstech.com/catalog/parts/{}".format(part_number)
     payload = auth
     headers = {
         'Content-Type': "application/json",
-        'Authorization': "Basic {}".format(BASIC_AUTH),
         'cache-control': "no-cache"
         }
 
-    response = requests.request("GET", url, json=payload, headers=headers)
+    response = requests.request("POST", url, json=payload, headers=headers)
 
     auth = None
-    if response.status_code == 200 or response.status_code == 201 :
+    if response.status_code == 200 or response.status_code == 201:
         return response.json()
     else:
         return None
 
-    
-
 
 def authenticate():
 
-    url = "https://esb.boschenlinea.com/api/login"
-    payload = {"logonId": LOGON_ID,
-                "logonPassword": LOGON_PASSWORD}
+    url = "https://api.beta.partstech.com/oauth/access"
+    payload = {
+  "accessType": "user",
+  "credentials": {
+    "user": {
+      "id": LOGON_ID,
+      "key": LOGON_PASSWORD
+    },
+    "partner": {
+      "id": PARTNER_ID,
+      "key": PARTNER_KEY
+    }
+  }
+}
+
+
     headers = {
         'Content-Type': "application/json",
-        'Authorization': "Basic {}".format(BASIC_AUTH),
         'cache-control': "no-cache"
         }
 
@@ -180,13 +199,11 @@ def authenticate():
     print(response.status_code)
     print(response.content)
 
-    if response.status_code == 200 or response.status_code == 201 :
+    if response.status_code == 200 or response.status_code == 201:
         return response.json()
-    else: 
+    else:
         print("FALTAN CREDENCIALES")
 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
-
-

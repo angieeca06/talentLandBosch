@@ -10,3 +10,7 @@ PRECIO_PARTE = [
 INFO_PARTE = [
     'ID: {id} \nNombre:  {nombre} \nDescripcion: {descripcion} \nPrecio: $ {precio}.'
 ]
+
+PART_TECH = [
+    'Su parte es ({partName})'
+]
