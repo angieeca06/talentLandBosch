@@ -89,10 +89,11 @@ def get_part_price(part_number):
 
 def get_part_tech(part_tech):
     response = part_tech_request(part_tech)
+    print(response)
     print(part_tech + 'Esto es una prueba')
 
     if response is None:
-        text = "Muchas gracias, permítame consultar con mi supervisor"
+        text = "El numero de parte es incorrecto"
     else:
 
         parttech = response['partName']
@@ -129,12 +130,12 @@ def get_part_tech(part_tech):
 # PartTech Request
 
 
-def part_tech_request(part_number):
+def part_tech_request(part_tech):
     global auth
     if auth is None:
         auth = authenticate()
 
-    url = "https://api.beta.partstech.com/catalog/parts/{}".format(part_number)
+    url = "https://api.beta.partstech.com/catalog/search"
     payload = auth
     headers = {
         'Content-Type': "application/json",
